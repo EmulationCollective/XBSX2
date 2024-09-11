@@ -3632,10 +3632,18 @@ void VMManager::UpdateDiscordPresence(bool update_session_time)
 	rp.details = s_title.empty() ?  TRANSLATE("VMManager","No Game Running") : s_title.c_str();
 
 	std::string state_string;
+
+	auto lock = Achievements::GetLock();
+
 	if (Achievements::HasRichPresence())
 	{
-		state_string = StringUtil::Ellipsise(Achievements::GetRichPresenceString(), 128);
-		rp.state = state_string.c_str();
+		rp.state = (state_string = StringUtil::Ellipsise(Achievements::GetRichPresenceString(), 128)).c_str();
+
+		if (const std::string& icon_url = Achievements::GetGameIconURL(); !icon_url.empty())
+		{
+			rp.largeImageKey = icon_url.c_str();
+			rp.largeImageText = s_title.c_str();
+		}
 	}
 
 	Discord_UpdatePresence(&rp);
