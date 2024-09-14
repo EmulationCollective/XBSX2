@@ -132,41 +132,45 @@ __ri void ImGuiManager::DrawPerformanceOverlay(float& position_y, float scale, f
 			switch (PerformanceMetrics::GetInternalFPSMethod())
 			{
 				case PerformanceMetrics::InternalFPSMethod::GSPrivilegedRegister:
-					fmt::format_to(std::back_inserter(text), "{:.2f} FPS", PerformanceMetrics::GetInternalFPS(),
+					text.append_format("FPS: {:.2f} [P]", PerformanceMetrics::GetInternalFPS(),
 						PerformanceMetrics::GetFPS());
 					break;
 
 				case PerformanceMetrics::InternalFPSMethod::DISPFBBlit:
-					fmt::format_to(std::back_inserter(text), "{:.2f} FPS", PerformanceMetrics::GetInternalFPS(),
+					text.append_format("FPS: {:.2f} [B]", PerformanceMetrics::GetInternalFPS(),
 						PerformanceMetrics::GetFPS());
 					break;
 
 				case PerformanceMetrics::InternalFPSMethod::None:
 				default:
-					fmt::format_to(std::back_inserter(text), "{:.2f} FPS", PerformanceMetrics::GetFPS());
+					text.append_format("FPS: {:.2f}", PerformanceMetrics::GetFPS());
 					break;
 			}
 			first = false;
 		}
 
+		if (GSConfig.OsdShowVPS)
+		{
+			text.append_format("{}VPS: {:.2f}", first ? "" : " | ", PerformanceMetrics::GetFPS(),
+				PerformanceMetrics::GetFPS());
+			first = false;
+		}
+
 		if (GSConfig.OsdShowSpeed)
 		{
-			fmt::format_to(std::back_inserter(text), " ({}%)", static_cast<u32>(std::round(speed)));
+			text.append_format("{}Speed: {}%", first ? "" : " | ", static_cast<u32>(std::round(speed)));
 
-			// We read the main config here, since MTGS doesn't get updated with speed toggles.
-			/* if (EmuConfig.GS.LimitScalar == 0.0f)
-				text += " (Max)";
+			const float target_speed = VMManager::GetTargetSpeed();
+			if (target_speed == 0.0f)
+				text.append(" (T: Max)");
 			else
-				fmt::format_to(std::back_inserter(text), " ({:.0f}%)", EmuConfig.GS.LimitScalar * 100.0f); */
+				text.append_format(" (T: {:.0f}%)", target_speed * 100.0f);
+			first = false;
 		}
 
 		if (GSConfig.OsdShowVersion)
 		{
-			if (GSConfig.OsdShowFPS || GSConfig.OsdShowSpeed)
-			{
-				text.append_format(" | ");
-			}
-			text.append_format("PCSX2 {}", GIT_REV);
+			text.append_format("{}PCSX2 {}", first ? "" : " | ", GIT_REV);
 		}
 
 		if (!text.empty())
