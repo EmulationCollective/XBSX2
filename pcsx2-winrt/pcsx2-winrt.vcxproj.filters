@@ -244,8 +244,8 @@
       <Filter>resources\sounds\achievements</Filter>
     </None>
     <None Include="xbsx2_TemporaryKey.pfx" />
-    <None Include="packages.config" />
     <None Include="xbsx2-winrt_TemporaryKey.pfx" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="resources\game_controller_db.txt">
