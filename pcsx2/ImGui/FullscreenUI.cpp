@@ -1260,7 +1260,7 @@ void FullscreenUI::DrawLandingWindow()
 {
 	ImVec2 menu_pos, menu_size;
 	DrawLandingTemplate(&menu_pos, &menu_size);
-	const char version_txt[] = "v2.0.8.1";
+	const char version_txt[] = "v2.0.8.2";
 	ImGui::PushStyleColor(ImGuiCol_Text, UIBackgroundTextColor);
 	
 	if (BeginHorizontalMenu("landing_window", menu_pos, menu_size, 4))
